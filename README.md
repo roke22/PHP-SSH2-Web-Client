@@ -4,7 +4,7 @@ Cliente Web SSH2 en PHP que usa websockets para conectar a otros servidores por 
 
 Necesitas tener activadas libssh2 instalado en el servidor y hospedarlo en un servidor linux, puedes comprobar libssh2 con "phpinfo()" mas informacion en http://php.net/manual/en/book.ssh2.php
 
-##INSTALACION
+## INSTALACION
 
 1. Instala libssh2
 2. Instala xterm con npm, en el directorio principal ejecuta "npm install xterm"
