@@ -56,7 +56,7 @@
       <div id="terminal" style="width:100%; height:90vh;visibility:hidden"></div>
       <script>
         var resizeInterval;
-        var wSocket = new WebSocket("ws:desarrolloweb.cetery.com:8080");
+        var wSocket = new WebSocket("ws:domain.name.com:8080");
         Terminal.applyAddon(attach);  // Apply the `attach` addon
         Terminal.applyAddon(fit);  //Apply the `fit` addon
         var term = new Terminal({
