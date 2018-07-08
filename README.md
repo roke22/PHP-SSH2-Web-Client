@@ -15,6 +15,10 @@ Necesitas tener activadas libssh2 instalado en el servidor y hospedarlo en un se
 5. Modifica la url del websocket en el fichero index.php
 6. Ahora puedes cargar la web
 
+## LICENCIA
+
+Cliente Web SSH2 esta bajo la licencia MIT, mas informacion en https://opensource.org/licenses/mit-license.php
+
 
 ## PHP SSH2 Web Client
 
@@ -31,4 +35,6 @@ You need to have libssh2 installed in your server and host the project on a linu
 5. Modify the url of the websocket in the index.php file.
 6. Now you can load the url of the domain.
 
+## LICENSE
 
+SSH2 Web Client is under MIT license, more info at https://opensource.org/licenses/mit-license.php
