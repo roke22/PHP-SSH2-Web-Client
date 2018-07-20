@@ -8,7 +8,7 @@ Necesitas tener activadas libssh2 instalado en el servidor y hospedarlo en un se
 
 ## INSTALACION
 
-1. Instala libssh2
+1. Instala libssh2. Si tienes plesk puedes seguir este manual https://support.plesk.com/hc/en-us/articles/213930085-How-to-install-SSH2-extension-for-PHP-
 2. Instala xterm con "npm install" o en el directorio principal ejecuta "npm install xterm"
 3. En el directorio "server" instala ratchet (http://socketo.me/) con composer, ejecuta en el directorio "server" el comando "composer install"
 4. Arranca el websocket que esta en la carpeta "server/bin", puedes hacerlo con el comando "php server/bin/websocket.php 2>&1 >/dev/null &" desde el directorio principal
@@ -28,7 +28,7 @@ You need to have libssh2 installed in your server and host the project on a linu
 
 ## INSTALLATION
 
-1. Install libssh2.
+1. Install libssh2. If you have Plesk Panel follow this manual https://support.plesk.com/hc/en-us/articles/213930085-How-to-install-SSH2-extension-for-PHP-
 2. Install xterm with npm with "npm install" or on the root folder execute "npm install xterm"
 3. On the "server" folder install ratchet (http://socketo.me/) with composer, execute on the "server" folder "composer install" 
 4. Run the websocket that is in the "server/bin" folder, you can do it with the commando "php server/bin/websocket.php 2>&1 >/dev/null &" from the root folder.
