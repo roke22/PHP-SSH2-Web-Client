@@ -30,6 +30,9 @@ class Servidorsocket implements MessageComponentInterface {
     protected $shell = array();
     protected $conectado = array();
 
+    const COLS = 80;
+    const ROWS = 24;
+
     public function __construct() {
         $this->clients = new \SplObjectStorage;
     }
@@ -77,7 +80,7 @@ class Servidorsocket implements MessageComponentInterface {
         $this->connection[$from->resourceId] = ssh2_connect($server, $port);
         if (ssh2_auth_password($this->connection[$from->resourceId], $user, $password)) {
           //$conn->send("Authentication Successful!\n");
-          $this->shell[$from->resourceId]=ssh2_shell($this->connection[$from->resourceId], 'xterm', null, 1000, 40, SSH2_TERM_UNIT_CHARS);
+          $this->shell[$from->resourceId]=ssh2_shell($this->connection[$from->resourceId], 'xterm', null, self::COLS, self::ROWS, SSH2_TERM_UNIT_CHARS);
           sleep(1);
           $this->conectado[$from->resourceId]=true;
           return true;
