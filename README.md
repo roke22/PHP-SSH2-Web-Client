@@ -15,6 +15,8 @@ Necesitas tener activadas libssh2 instalado en el servidor y hospedarlo en un se
 5. Modifica la url del websocket en el fichero index.php
 6. Ahora puedes cargar la web
 
+NOTA: Puedes cambiar el tamaño de la consola modificando las constantes ROWS y COLS en Servidorsocket.php pero tambien debes modificarlos en el index.html, en caso de ser diferente no dibujara correctamente la informacion en la terminal web.
+
 ## LICENCIA
 
 Cliente Web SSH2 esta bajo la licencia MIT, mas informacion en https://opensource.org/licenses/mit-license.php
@@ -34,6 +36,8 @@ You need to have libssh2 installed in your server and host the project on a linu
 4. Run the websocket that is in the "server/bin" folder, you can do it with the commando "php server/bin/websocket.php 2>&1 >/dev/null &" from the root folder.
 5. Modify the url of the websocket in the index.php file.
 6. Now you can load the url of the domain.
+
+NOTE: You can change the size of the terminal modifying the constants ROWS and COLS in Servidorsocket.php but you have to do in index.html too. Must be the same size in both files or the web terminal will draw the information in a bad way.
 
 ## LICENSE
 
