@@ -1,3 +1,6 @@
+## New project with laravel and server inventory with ssh web client
+https://github.com/roke22/Laravel-ssh-client
+
 ![](https://raw.githubusercontent.com/roke22/PHP-SSH2-Web-Client/master/demo.gif)
 
 ## PHP SSH2 Cliente Web
