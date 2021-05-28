@@ -23,10 +23,10 @@
 <!doctype html>
   <html>
     <head>
-      <link rel="stylesheet" href="node_modules/xterm/dist/xterm.css" />
-      <script src="node_modules/xterm/dist/xterm.js"></script>
-      <script src="node_modules/xterm/dist/addons/attach/attach.js"></script>
-      <script src="node_modules/xterm/dist/addons/fit/fit.js"></script>
+      <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
+      <script src="node_modules/xterm/lib/xterm.js"></script>
+      <script src="node_modules/xterm-addon-attach/lib/xterm-addon-attach.js"></script>
+      <script src="node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
       <style>
       body {font-family: Arial, Helvetica, sans-serif;}
 
@@ -78,13 +78,15 @@
       <div id="terminal" style="width:100%; height:90vh;visibility:hidden"></div>
       <script>
         var resizeInterval;
-        var wSocket = new WebSocket("ws:domain.name.com:8080");
-        Terminal.applyAddon(attach);  // Apply the `attach` addon
-        Terminal.applyAddon(fit);  //Apply the `fit` addon
+        var wSocket = new WebSocket("ws:localhost:8080");
+        const attachAddon = new AttachAddon.AttachAddon(wSocket);
+        const fitAddon = new FitAddon.FitAddon();
         var term = new Terminal({
-				  cols: 80,
-				  rows: 24
+          cols: 80,
+          rows: 24
         });
+        term.loadAddon(attachAddon); // Apply the `attach` addon
+        term.loadAddon(fitAddon); //Apply the `fit` addon
         term.open(document.getElementById('terminal'));
 
 
@@ -101,13 +103,12 @@
                           };
           wSocket.send(JSON.stringify(dataSend));
 
-          term.fit();
+          fitAddon.fit();
           term.focus();
         }       
 
         wSocket.onopen = function (event) {
           console.log("Socket Open");
-          term.attach(wSocket,false,false);
           window.setInterval(function(){
             wSocket.send(JSON.stringify({"refresh":""}));
           }, 700);
@@ -118,7 +119,7 @@
           alert("Connection Closed");
         }        
         
-        term.on('data', function (data) {
+        term.onData((data) => {
           var dataSend = {"data":{"data":data}};
           wSocket.send(JSON.stringify(dataSend));
           //Xtermjs with attach dont print zero, so i force. Need to fix it :(
@@ -135,7 +136,7 @@
         // Recalculates the terminal Columns / Rows and sends new size to SSH server + xtermjs
         function resize() {
           if (term) {
-            term.fit()
+            fitAddon.fit()
           }
         }
       </script>
