@@ -4,16 +4,14 @@
     "description": "PHP SSH2 Web Client",
     "main": "index.php",
     "dependencies": {
-      "xterm": "^3.4.1"
+        "xterm": "^3.4.1"
     },
-    "devDependencies": 
-        {
-            "xterm": "^3.4.1"
-        },
+    "devDependencies": {
+        "xterm": "^3.4.1"
+    },
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Jose Joaquin Anton",
     "license": "MIT"
-  }
-  
+}
