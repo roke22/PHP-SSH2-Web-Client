@@ -21,10 +21,12 @@
 */
 
 namespace MyApp;
+
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-class Servidorsocket implements MessageComponentInterface {
+class Servidorsocket implements MessageComponentInterface
+{
     protected $clients;
     protected $connection = array();
     protected $shell = array();
@@ -33,11 +35,13 @@ class Servidorsocket implements MessageComponentInterface {
     const COLS = 80;
     const ROWS = 24;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->clients = new \SplObjectStorage;
     }
 
-    public function onOpen(ConnectionInterface $conn) {
+    public function onOpen(ConnectionInterface $conn)
+    {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
         $this->connection[$conn->resourceId] = null;
@@ -45,63 +49,67 @@ class Servidorsocket implements MessageComponentInterface {
         $this->conectado[$conn->resourceId] = null;
     }
 
-    public function onMessage(ConnectionInterface $from, $msg) {
-        $data = json_decode($msg,true);
+    public function onMessage(ConnectionInterface $from, $msg)
+    {
+        $data = json_decode($msg, true);
         switch (key($data)) {
             case 'data':
-                fwrite($this->shell[$from->resourceId],$data['data']['data']);
+                fwrite($this->shell[$from->resourceId], $data['data']['data']);
                 usleep(800);
-                while($line = fgets($this->shell[$from->resourceId])) {
+                while ($line = fgets($this->shell[$from->resourceId])) {
                     $from->send(mb_convert_encoding($line, "UTF-8"));
                 }
                 break;
             case 'auth':
-                if ($this->connectSSH($data['auth']['server'],$data['auth']['port'],$data['auth']['user'],$data['auth']['password'],$from)){
+                if ($this->connectSSH($data['auth']['server'], $data['auth']['port'], $data['auth']['user'], $data['auth']['password'], $from)) {
                     $from->send(mb_convert_encoding("Connected....", "UTF-8"));
-                    while($line = fgets($this->shell[$from->resourceId])) {
+                    while ($line = fgets($this->shell[$from->resourceId])) {
                         $from->send(mb_convert_encoding($line, "UTF-8"));
                     }
-                }else{
+                } else {
                     $from->send(mb_convert_encoding("Error, can not connect to the server. Check the credentials", "UTF-8"));
                     $from->close();
                 }
                 break;
             default:
-                if ($this->conectado[$from->resourceId]){
-                  while($line = fgets($this->shell[$from->resourceId])) {
-                      $from->send(mb_convert_encoding($line, "UTF-8"));
-                  }
+                if ($this->conectado[$from->resourceId]) {
+                    while ($line = fgets($this->shell[$from->resourceId])) {
+                        $from->send(mb_convert_encoding($line, "UTF-8"));
+                    }
                 }
                 break;
         }
     }
 
-    public function connectSSH($server,$port,$user,$password,$from){
+    public function connectSSH($server, $port, $user, $password, $from)
+    {
         $this->connection[$from->resourceId] = ssh2_connect($server, $port);
         if (ssh2_auth_password($this->connection[$from->resourceId], $user, $password)) {
-          //$conn->send("Authentication Successful!\n");
-          $this->shell[$from->resourceId]=ssh2_shell($this->connection[$from->resourceId], 'xterm', null, self::COLS, self::ROWS, SSH2_TERM_UNIT_CHARS);
-          sleep(1);
-          $this->conectado[$from->resourceId]=true;
-          return true;
+            //$conn->send("Authentication Successful!\n");
+            $this->shell[$from->resourceId] = ssh2_shell($this->connection[$from->resourceId], 'xterm', null, self::COLS, self::ROWS, SSH2_TERM_UNIT_CHARS);
+            sleep(1);
+            $this->conectado[$from->resourceId] = true;
+            return true;
         } else {
-          return false;
+            return false;
         }
     }
 
-    public function onClose(ConnectionInterface $conn) {
+    public function onClose(ConnectionInterface $conn)
+    {
         // The connection is closed, remove it, as we can no longer send it messages
-        $this->conectado[$conn->resourceId]=false;
+        $this->conectado[$conn->resourceId] = false;
         $this->clients->detach($conn);
-		
+
         // Gracefully closes terminal, if it exists
-		if(isset($this->shell[$conn->resourceId]) && is_resource($this->shell[$conn->resourceId])) {
-			fclose($this->shell[$conn->resourceId]);
-			$this->shell[$conn->resourceId] = null;
-		}
+        if (isset($this->shell[$conn->resourceId]) && is_resource($this->shell[$conn->resourceId])) {
+            fclose($this->shell[$conn->resourceId]);
+            $this->shell[$conn->resourceId] = null;
+        }
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    public function onError(ConnectionInterface $conn, \Exception $e)
+    {
         $conn->close();
     }
 }
