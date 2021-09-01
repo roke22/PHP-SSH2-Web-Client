@@ -93,11 +93,15 @@ class Servidorsocket implements MessageComponentInterface {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->conectado[$conn->resourceId]=false;
         $this->clients->detach($conn);
+		
+        // Gracefully closes terminal, if it exists
+		if(isset($this->shell[$conn->resourceId]) && is_resource($this->shell[$conn->resourceId])) {
+			fclose($this->shell[$conn->resourceId]);
+			$this->shell[$conn->resourceId] = null;
+		}
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
         $conn->close();
     }
 }
-
-?>
