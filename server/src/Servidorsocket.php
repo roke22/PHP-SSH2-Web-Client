@@ -59,6 +59,12 @@ class Servidorsocket implements MessageComponentInterface
             case 'data':
                 fwrite($this->shell[$from->resourceId], $data['data']['data']);
                 break;
+            case 'resize':
+                // Use lastest build https://github.com/php/pecl-networking-ssh2 for ssh2_shell_resize() function
+                if (function_exists('ssh2_shell_resize')) {
+                    ssh2_shell_resize($this->shell[$from->resourceId], $data['resize']['cols'], $data['resize']['rows']);
+                }
+                break;
             case 'auth':
                 if ($this->connectSSH($data['auth']['server'], $data['auth']['port'], $data['auth']['user'], $data['auth']['password'], $from)) {
                     $from->send(mb_convert_encoding("Connected....", "UTF-8"));

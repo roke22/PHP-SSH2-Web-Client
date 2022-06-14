@@ -123,6 +123,15 @@
             term.write(data);
           }
         })
+
+        term.onResize(function (evt) {
+          wSocket.send(JSON.stringify({
+            "resize": {
+              "rows": evt.rows,
+              "cols": evt.cols
+            }
+          }));
+        })
         
         //Execute resize with a timeout
         window.onresize = function() {
