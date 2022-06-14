@@ -108,9 +108,6 @@
         wSocket.onopen = function (event) {
           console.log("Socket Open");
           term.attach(wSocket,false,false);
-          window.setInterval(function(){
-            wSocket.send(JSON.stringify({"refresh":""}));
-          }, 700);
         };
 
         wSocket.onerror = function (event){
