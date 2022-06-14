@@ -66,7 +66,14 @@ class Servidorsocket implements MessageComponentInterface
                 }
                 break;
             case 'auth':
-                if ($this->connectSSH($data['auth']['server'], $data['auth']['port'], $data['auth']['user'], $data['auth']['password'], $from)) {
+                if ($this->connectSSH(
+                        $data['auth']['server'],
+                        $data['auth']['port'],
+                        $data['auth']['user'],
+                        $data['auth']['password'],
+                        $data['auth']['key'],
+                        $from)
+                    ) {
                     $from->send(mb_convert_encoding("Connected....", "UTF-8"));
                 } else {
                     $from->send(mb_convert_encoding("Error, can not connect to the server. Check the credentials", "UTF-8"));
@@ -76,10 +83,44 @@ class Servidorsocket implements MessageComponentInterface
         }
     }
 
-    public function connectSSH($server, $port, $user, $password, $from)
+    public function connectSSH($server, $port, $user, $password, $key, $from)
     {
         $this->connection[$from->resourceId] = ssh2_connect($server, $port);
-        if (ssh2_auth_password($this->connection[$from->resourceId], $user, $password)) {
+
+        $auth = false;
+        if ($key) {
+            //convert from data-url
+            $key_data=file_get_contents($key);
+
+            $pem = tmpfile();
+            $pem_file = stream_get_meta_data($pem)['uri'];
+            file_put_contents($pem_file,$key_data);
+
+            //convert key to rsa
+            shell_exec('ssh-keygen -p -N "" -m pem -f ' . $pem_file);
+
+            $pub = tmpfile();
+            $pub_file = stream_get_meta_data($pub)['uri'];
+
+            //extract public key
+            shell_exec("ssh-keygen -m pem -y -f $pem_file > $pub_file");
+
+            $auth = ssh2_auth_pubkey_file(
+                $this->connection[$from->resourceId],
+                $user,
+                $pub_file,
+                $pem_file,
+                'secret'
+            );
+        } else {
+            $auth = ssh2_auth_password(
+                $this->connection[$from->resourceId],
+                $user,
+                $password
+            );
+        }
+
+        if ($auth) {
             //$conn->send("Authentication Successful!\n");
             $this->shell[$from->resourceId] = ssh2_shell($this->connection[$from->resourceId], 'xterm', null, self::COLS, self::ROWS, SSH2_TERM_UNIT_CHARS);
             sleep(1);
