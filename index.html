@@ -30,7 +30,7 @@
       <style>
       body {font-family: Arial, Helvetica, sans-serif;}
 
-      input[type=text], input[type=password], input[type=number] {
+      input[type=text], input[type=password], input[type=number] input[type=file] {
           width: 100%;
           padding: 12px 20px;
           margin: 8px 0;
@@ -73,6 +73,8 @@
         <input type="text" id="user" name="user" title="user" placeholder="user" /><br>
         <label for="psw"><b>Password</b></label><br>
         <input type="password" id="password" name="password" title="password" placeholder="password" /><br>
+        <label for="key"><b>Key</b></label><br>
+        <input type="file" id="key" name="key" title="key" placeholder="key" /><br>
         <button type="button" onclick="ConnectServer()">Connect</button><br>
       </div>
       <div id="terminal" style="width:100%; height:90vh;visibility:hidden"></div>
@@ -96,10 +98,22 @@
                             "server":document.getElementById("server").value,
                             "port":document.getElementById("port").value,
                             "user":document.getElementById("user").value,
-                            "password":document.getElementById("password").value
+                            "password":document.getElementById("password").value,
+                            "key": false
                             }
                           };
-          wSocket.send(JSON.stringify(dataSend));
+          var file=document.getElementById("key").files[0];
+
+          if(file){
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+              dataSend['auth']['key'] = reader.result;
+              wSocket.send(JSON.stringify(dataSend));
+            };
+          }else{
+            wSocket.send(JSON.stringify(dataSend));
+          }
 
           term.fit();
           term.focus();
@@ -108,9 +122,6 @@
         wSocket.onopen = function (event) {
           console.log("Socket Open");
           term.attach(wSocket,false,false);
-          window.setInterval(function(){
-            wSocket.send(JSON.stringify({"refresh":""}));
-          }, 700);
         };
 
         wSocket.onerror = function (event){
@@ -125,6 +136,15 @@
           if (data=="0"){
             term.write(data);
           }
+        })
+
+        term.onResize(function (evt) {
+          wSocket.send(JSON.stringify({
+            "resize": {
+              "rows": evt.rows,
+              "cols": evt.cols
+            }
+          }));
         })
         
         //Execute resize with a timeout
